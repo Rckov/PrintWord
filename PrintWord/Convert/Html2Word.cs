@@ -46,7 +46,7 @@ namespace PrintWord.Convert
                     }
                 }
 
-                mainPart.Document.Body.InsertAt<AltChunk>(new AltChunk()
+                mainPart.Document.Body.InsertAt(new AltChunk()
                 {
                     Id = generateId
                 }, 0);
