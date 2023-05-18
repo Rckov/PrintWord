@@ -22,37 +22,31 @@ namespace PrintWord.Convert
 
         public void Convert(string pathFile)
         {
-            var generateId = "AltChunkId1";
+            var generateId = "generateId1";
 
-            using (var memoryStream = new MemoryStream())
-            using (var wordprocessing = WordprocessingDocument.Create(memoryStream, WordprocessingDocumentType.Document))
+            using (var wordprocessing = WordprocessingDocument.Create(Path.GetFileNameWithoutExtension(pathFile) + ".docx", WordprocessingDocumentType.Document))
             {
-                var mainPart = wordprocessing.MainDocumentPart;
+                var mainDocumentPart = wordprocessing.MainDocumentPart;
 
-                if (mainPart == null)
+                if (mainDocumentPart == null)
                 {
-                    mainPart = wordprocessing.AddMainDocumentPart();
-                    Document document = new Document(new Body());
-                    document.Save(mainPart);
+                    mainDocumentPart = wordprocessing.AddMainDocumentPart();
+                    mainDocumentPart.Document = new Document();
+                    mainDocumentPart.Document.Append(new Body());
                 }
 
-                var formatImports = mainPart.AddAlternativeFormatImportPart(AlternativeFormatImportPartType.Xhtml, generateId);
-
-                using (var streamFormat = formatImports.GetStream(FileMode.Create, FileAccess.Write))
+                using (var memoryStream = new FileStream(pathFile, FileMode.Open))
                 {
-                    using (var streamWriter = new StreamWriter(streamFormat))
+                    var formatImportPart = mainDocumentPart.AddAlternativeFormatImportPart(AlternativeFormatImportPartType.Html, generateId);
+
+                    formatImportPart.FeedData(memoryStream);
+                    mainDocumentPart.Document.Body.Append(new AltChunk
                     {
-                        streamWriter.Write(File.ReadAllText(pathFile));
-                    }
+                        Id = generateId
+                    });
                 }
 
-                mainPart.Document.Body.InsertAt(new AltChunk()
-                {
-                    Id = generateId
-                }, 0);
-                mainPart.Document.Save();
-
-                File.WriteAllBytes(Path.GetFileNameWithoutExtension(pathFile) + ".docx", memoryStream.ToArray());
+                wordprocessing.MainDocumentPart.Document.Save();
             }
         }
 
