@@ -52,12 +52,6 @@ namespace PrintWord.Convert
 
         public void PasteImages(IEnumerable<string> images)
         {
-            foreach (var paragraph in _wordprocessing.MainDocumentPart.Document.Descendants<Paragraph>().ToList()) 
-            {
-                ReplaceImages(_wordprocessing, paragraph);
-            }
-
-
             foreach (var item in images)
             {
                 var mainDocumentPart = GetDocumentPart();
