@@ -68,13 +68,6 @@ namespace PrintWord.Convert
             }
         }
 
-        void ReplaceImages(WordprocessingDocument wordDoc, Paragraph paragraph)
-        {
-            // get all images in paragraph
-            var imagesToReplace = paragraph.Descendants<A.Blip>().ToList();
-
-        }
-
         public void SaveDocument(string pathFile)
         {
             _wordprocessing.MainDocumentPart.Document.Save();
