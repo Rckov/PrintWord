@@ -25,7 +25,7 @@ namespace PrintWord.Convert
         {
             _pathFile = pathFile;
             _wordprocessing = WordprocessingDocument
-                .Create(Path.GetFileNameWithoutExtension(pathFile) + ".docx", WordprocessingDocumentType.Document);
+                .Create(Path.GetFileNameWithoutExtension(_pathFile) + ".docx", WordprocessingDocumentType.Document);
         }
 
         public void Dispose()
@@ -43,10 +43,11 @@ namespace PrintWord.Convert
                 var formatImportPart = mainDocumentPart.AddAlternativeFormatImportPart(AlternativeFormatImportPartType.Html, generateId);
 
                 formatImportPart.FeedData(memoryStream);
-                mainDocumentPart.Document.Body.Append(new AltChunk
+                mainDocumentPart.Document.Body.InsertAfter(new AltChunk
                 {
                     Id = generateId
-                });
+                }, mainDocumentPart.Document.Body.Elements<Paragraph>().LastOrDefault());
+                mainDocumentPart.Document.Save();
             }
         }
 
@@ -56,14 +57,14 @@ namespace PrintWord.Convert
             {
                 var mainDocumentPart = GetDocumentPart();
                 var imagePart = mainDocumentPart.AddImagePart(ImagePartType.Jpeg);
-
+            
                 using (FileStream stream = new FileStream(item, FileMode.Open))
                 {
                     imagePart.FeedData(stream);
                 }
-
+            
                 var drawElement = GetImageToBody(mainDocumentPart.GetIdOfPart(imagePart));
-
+            
                 //PasteImage(item);
             }
         }

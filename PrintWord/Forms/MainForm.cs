@@ -47,7 +47,7 @@ namespace PrintWord
                 {
                     _convert.Convert();
                     _convert.PasteImages(listImages);
-                    _convert.SaveDocument(Path.GetFileNameWithoutExtension(txtPath.Text));
+                    //_convert.SaveDocument(Path.GetFileNameWithoutExtension(txtPath.Text));
                 }
             }
         }

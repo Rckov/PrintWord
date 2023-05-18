@@ -6,13 +6,15 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace PrintWord.Convert
 {
     internal class InteropWord : IConvert
     {
         private Document _document;
-        private readonly Application _application;
+        private Application _application;
 
         private readonly string _pathFile;
 
@@ -25,7 +27,10 @@ namespace PrintWord.Convert
         public void Dispose()
         {
             _document?.Close();
+            Marshal.FinalReleaseComObject(_document);
+
             _application?.Quit();
+            Marshal.FinalReleaseComObject(_application);
         }
 
         public void Convert()
@@ -41,11 +46,27 @@ namespace PrintWord.Convert
             {
                 throw new Exception("Failed to convert html document to .rtf document");
             }
+
+            Dispose();
         }
 
         public void PasteImages(IEnumerable<string> images)
         {
-            if (images.Count() == 0) return;
+            _application = new Application();
+            _document = _application.Documents.Open(FileName: _pathFile + ".rtf", ReadOnly: false);
+
+            foreach (var image in images)
+            {
+                foreach (Range _rangeObject in _document.StoryRanges)
+                {
+                    if (_rangeObject.Find.Execute("["+ image + "]", Forward: true, Wrap: WdFindWrap.wdFindContinue))
+                    {
+                        _rangeObject.Select();
+                        _rangeObject.Delete();
+                        _application.Selection.InlineShapes.AddPicture(Path.GetFullPath(images.ElementAt(0)), false, true, _rangeObject);
+                    }
+                }
+            }
         }
 
         public void SaveDocument(string pathFile)
