@@ -43,12 +43,10 @@ namespace PrintWord
                 var listImages = new List<string>() { "СхемаП4.jpg" };
                 var type = Enum.Parse(typeof(ConvertType), combPrintType.SelectedValue.ToString());
 
-                using (_convert = GetConverter((ConvertType)type))
-                {
-                    _convert.Convert();
-                    _convert.PasteImages(listImages);
-                    //_convert.SaveDocument(Path.GetFileNameWithoutExtension(txtPath.Text));
-                }
+                _convert = GetConverter((ConvertType)type);
+                _convert.Convert();
+                _convert.PasteImages(listImages);
+                //_convert.SaveDocument(Path.GetFileNameWithoutExtension(txtPath.Text));
             }
         }
 

@@ -40,7 +40,7 @@ namespace PrintWord.Convert
             var pathTempWord = Path.Combine(pathTemp, pathWord);
 
             _document = _application.Documents.Open(FileName: _pathFile, ReadOnly: false);
-            _document.SaveAs(FileName: _pathFile + ".rtf", FileFormat: WdSaveFormat.wdFormatRTF);
+            _document.SaveAs(FileName: _pathFile, FileFormat: WdSaveFormat.wdFormatDocument);
 
             if (!File.Exists(pathTempWord))
             {
@@ -53,7 +53,7 @@ namespace PrintWord.Convert
         public void PasteImages(IEnumerable<string> images)
         {
             _application = new Application();
-            _document = _application.Documents.Open(FileName: _pathFile + ".rtf", ReadOnly: false);
+            _document = _application.Documents.Open(FileName: _pathFile + ".docx", ReadOnly: false);
 
             foreach (var image in images)
             {
