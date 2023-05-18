@@ -4,10 +4,8 @@ using PrintWord.Interfaces;
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 
 namespace PrintWord.Convert
 {
@@ -16,8 +14,11 @@ namespace PrintWord.Convert
         private Document _document;
         private readonly Application _application;
 
-        public InteropWord()
+        private readonly string _pathFile;
+
+        public InteropWord(string pathFile)
         {
+            _pathFile = pathFile;
             _application = new Application();
         }
 
@@ -27,14 +28,14 @@ namespace PrintWord.Convert
             _application?.Quit();
         }
 
-        public void Convert(string pathFile)
+        public void Convert()
         {
             var pathTemp = Path.GetTempPath();
-            var pathWord = Path.GetFileNameWithoutExtension(pathFile) + ".rtf";
+            var pathWord = Path.GetFileNameWithoutExtension(_pathFile) + ".rtf";
             var pathTempWord = Path.Combine(pathTemp, pathWord);
 
-            _document = _application.Documents.Open(FileName: pathFile, ReadOnly: false);
-            _document.SaveAs(FileName: pathFile + ".rtf", FileFormat: WdSaveFormat.wdFormatRTF);
+            _document = _application.Documents.Open(FileName: _pathFile, ReadOnly: false);
+            _document.SaveAs(FileName: _pathFile + ".rtf", FileFormat: WdSaveFormat.wdFormatRTF);
 
             if (!File.Exists(pathTempWord))
             {

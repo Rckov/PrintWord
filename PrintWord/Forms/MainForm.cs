@@ -5,8 +5,6 @@ using PrintWord.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace PrintWord
@@ -47,9 +45,9 @@ namespace PrintWord
 
                 using (_convert = GetConverter((ConvertType)type))
                 {
-                    _convert.Convert(txtPath.Text);
-                    //_convert.PasteImages(listImages);
-                    //_convert.SaveDocument(Path.GetFileNameWithoutExtension(txtPath.Text));
+                    _convert.Convert();
+                    _convert.PasteImages(listImages);
+                    _convert.SaveDocument(Path.GetFileNameWithoutExtension(txtPath.Text));
                 }
             }
         }
@@ -58,8 +56,8 @@ namespace PrintWord
         {
             switch (type)
             {
-                case ConvertType.Html2Word: return new Html2Word();
-                case ConvertType.InteropWord: return new InteropWord();
+                case ConvertType.Html2Word: return new Html2Word(txtPath.Text);
+                case ConvertType.InteropWord: return new InteropWord(txtPath.Text);
                 default: return default;
             }
         }
