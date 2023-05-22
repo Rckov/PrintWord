@@ -11,14 +11,14 @@ using System.Runtime.InteropServices;
 
 namespace PrintWord.Convert
 {
-    internal class InteropWord : IConvert
+    internal class InteropOfficeWord : IConvert
     {
         private Document _document;
         private Application _application;
 
         private readonly string _pathFile;
 
-        public InteropWord(string pathFile)
+        public InteropOfficeWord(string pathFile)
         {
             _pathFile = pathFile;
             _application = new Application();
@@ -33,7 +33,7 @@ namespace PrintWord.Convert
             Marshal.FinalReleaseComObject(_application);
         }
 
-        public void Convert()
+        public void PasteHtml(string v)
         {
             var pathTemp = Path.GetTempPath();
             var pathWord = Path.GetFileNameWithoutExtension(_pathFile) + ".rtf";
@@ -46,20 +46,18 @@ namespace PrintWord.Convert
             {
                 throw new Exception("Failed to convert html document to .rtf document");
             }
-
-            Dispose();
         }
 
-        public void PasteImages(IEnumerable<string> images)
+        public void PasteImages(string fileDocument, IEnumerable<string> images)
         {
             _application = new Application();
-            _document = _application.Documents.Open(FileName: _pathFile + ".rtf", ReadOnly: false);
+            _document = _application.Documents.Open(FileName: fileDocument, ReadOnly: false);
 
             foreach (var image in images)
             {
                 foreach (Range _rangeObject in _document.StoryRanges)
                 {
-                    if (_rangeObject.Find.Execute("["+ image + "]", Forward: true, Wrap: WdFindWrap.wdFindContinue))
+                    if (_rangeObject.Find.Execute("[" + image + "]", Forward: true, Wrap: WdFindWrap.wdFindContinue))
                     {
                         _rangeObject.Select();
                         _rangeObject.Delete();
@@ -67,21 +65,6 @@ namespace PrintWord.Convert
                     }
                 }
             }
-        }
-
-        public void SaveDocument(string pathFile)
-        {
-            _document.SaveAs(FileName: pathFile + ".rtf", FileFormat: WdSaveFormat.wdFormatRTF);
-        }
-
-        private Document OpenDocument(string pathFile)
-        {
-            return _application.Documents.Open(FileName: pathFile, ReadOnly: false);
-        }
-
-        private void ReplaceWordParameters(string pathImage)
-        {
-            _application.Selection.InlineShapes.AddPicture(pathImage);
         }
     }
 }

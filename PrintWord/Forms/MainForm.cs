@@ -20,7 +20,7 @@ namespace PrintWord
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-            combPrintType.DataSource = (object)Enum.GetValues(typeof(ConvertType));
+            combPrintType.DataSource = Enum.GetValues(typeof(ConvertType));
         }
 
         private void BtBrowse_Click(object sender, EventArgs e)
@@ -43,12 +43,9 @@ namespace PrintWord
                 var listImages = new List<string>() { "СхемаП4.jpg" };
                 var type = Enum.Parse(typeof(ConvertType), combPrintType.SelectedValue.ToString());
 
-                using (_convert = GetConverter((ConvertType)type))
-                {
-                    _convert.Convert();
-                    _convert.PasteImages(listImages);
-                    //_convert.SaveDocument(Path.GetFileNameWithoutExtension(txtPath.Text));
-                }
+                _convert = GetConverter((ConvertType)type);
+                _convert.PasteHtml(txtPath.Text);
+                _convert.PasteImages(txtPath.Text, listImages);
             }
         }
 
@@ -56,8 +53,8 @@ namespace PrintWord
         {
             switch (type)
             {
-                case ConvertType.Html2Word: return new Html2Word(txtPath.Text);
-                case ConvertType.InteropWord: return new InteropWord(txtPath.Text);
+                case ConvertType.Html2Word: return new InteropOpenXml();
+                case ConvertType.InteropWord: return new InteropOfficeWord(txtPath.Text);
                 default: return default;
             }
         }
