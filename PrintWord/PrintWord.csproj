@@ -56,7 +56,6 @@
   <ItemGroup>
     <Compile Include="Convert\Enums\ConvertType.cs" />
     <Compile Include="Convert\InteropOpenXml.cs" />
-    <Compile Include="Convert\InteropOfficeWord.cs" />
     <Compile Include="Forms\MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
